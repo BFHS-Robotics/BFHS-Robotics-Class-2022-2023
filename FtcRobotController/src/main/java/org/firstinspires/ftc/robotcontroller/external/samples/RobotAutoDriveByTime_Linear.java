@@ -103,18 +103,18 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         rightRearDrive.setPower(FORWARD_SPEED);
         leftRearDrive.setPower(FORWARD_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
+        while (opModeIsActive() && (runtime.seconds() < 2.8)) {
             telemetry.addData("Path", "Leg 1: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
 
-        // Step 2:  Spin right for 1.3 seconds
+        // Step 2:  Crab right for 3.5 seconds
         leftDrive.setPower(FORWARD_SPEED);
         rightDrive.setPower(-FORWARD_SPEED);
         rightRearDrive.setPower(FORWARD_SPEED);
         leftRearDrive.setPower(-FORWARD_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
+        while (opModeIsActive() && (runtime.seconds() < 3.25)) {
             telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
@@ -125,18 +125,18 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         rightRearDrive.setPower(-FORWARD_SPEED);
         leftRearDrive.setPower(-FORWARD_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
+        while (opModeIsActive() && (runtime.seconds() < 2.8)) {
             telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
 
-        // Step 4:  Crab Left for 3 sec
+        // Step 4:  Crab Left for 3.5 sec
         leftDrive.setPower(-FORWARD_SPEED);
         rightDrive.setPower(FORWARD_SPEED);
         rightRearDrive.setPower(-FORWARD_SPEED);
         leftRearDrive.setPower(FORWARD_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.0)) {
+        while (opModeIsActive() && (runtime.seconds() < 3.5)) {
             telemetry.addData("Path", "Leg 3: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
