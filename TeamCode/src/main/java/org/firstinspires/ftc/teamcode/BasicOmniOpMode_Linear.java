@@ -81,7 +81,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     static final double MIN_POS     =  0.0;     // Minimum rotational position
 
     // Define class members
-    Servo servo;
+    private Servo servo = null;
     double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
     boolean rampUp = true;
 
@@ -89,16 +89,10 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     @Override
     public void runOpMode() {
         servo = hardwareMap.get(Servo.class, "armServo");
-        boolean armUp = gamepad1.y;
-        boolean armDown = gamepad1.a;
 
-        if (armUp == true){
-            position += INCREMENT;
-        }
 
-        if (armDown == true) {
-            position -= INCREMENT;
-        }
+
+
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
@@ -122,6 +116,20 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
+
+
+            while (gamepad1.y){
+                position += INCREMENT;
+                servo.setPosition(position);
+                //servo.setPosition(0.0);
+            }
+
+            while (gamepad1.a) {
+                position -= INCREMENT;
+                servo.setPosition(position);
+//                servo.setPosition(1.0);
+            }
+            //servo.setPosition(position);
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.

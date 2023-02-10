@@ -70,6 +70,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
 
     static final double     FORWARD_SPEED = 0.31;
     static final double     TURN_SPEED    = 0.5;
+    static final double     RIGHT_FORWARD_SPEED = .33;
 
     @Override
     public void runOpMode() {
@@ -99,7 +100,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
 
         // Step 1:  Drive forward for 3 seconds
         leftDrive.setPower(FORWARD_SPEED);
-        rightDrive.setPower(FORWARD_SPEED);
+        rightDrive.setPower(RIGHT_FORWARD_SPEED);
         rightRearDrive.setPower(FORWARD_SPEED);
         leftRearDrive.setPower(FORWARD_SPEED);
         runtime.reset();
@@ -114,14 +115,14 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         rightRearDrive.setPower(FORWARD_SPEED);
         leftRearDrive.setPower(-FORWARD_SPEED);
         runtime.reset();
-        while (opModeIsActive() && (runtime.seconds() < 3.25)) {
+        while (opModeIsActive() && (runtime.seconds() < 3.4)) {
             telemetry.addData("Path", "Leg 2: %4.1f S Elapsed", runtime.seconds());
             telemetry.update();
         }
 
         // Step 3:  Drive Backward for 1 Second
         leftDrive.setPower(-FORWARD_SPEED);
-        rightDrive.setPower(-FORWARD_SPEED);
+        rightDrive.setPower(-RIGHT_FORWARD_SPEED);
         rightRearDrive.setPower(-FORWARD_SPEED);
         leftRearDrive.setPower(-FORWARD_SPEED);
         runtime.reset();
