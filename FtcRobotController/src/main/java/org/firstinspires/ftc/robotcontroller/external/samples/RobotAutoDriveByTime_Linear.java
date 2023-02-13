@@ -65,12 +65,14 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
     private DcMotor         leftRearDrive   = null;
     private DcMotor         rightRearDrive  = null;
 
+
     private ElapsedTime     runtime = new ElapsedTime();
 
 
     static final double     FORWARD_SPEED = 0.31;
     static final double     TURN_SPEED    = 0.5;
     static final double     RIGHT_FORWARD_SPEED = .33;
+
 
     @Override
     public void runOpMode() {
@@ -81,6 +83,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         leftRearDrive  = hardwareMap.get(DcMotor.class, "leftBackDrive");
         rightRearDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
 
+
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
@@ -88,6 +91,7 @@ public class RobotAutoDriveByTime_Linear extends LinearOpMode {
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
         leftRearDrive.setDirection(DcMotor.Direction.REVERSE);
         rightRearDrive.setDirection(DcMotor.Direction.FORWARD);
+
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Ready to run");    //
