@@ -82,6 +82,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     static final double MAX_POS     =  1.0;     // Maximum rotational position
     static final double MIN_POS     =  0.0;     // Minimum rotational position
     static final double     slideSpeed = 0.4; // Slide Speed (Up/down)
+    static  double  yPos = 0.0;
 
 
     // Define class members
@@ -138,10 +139,15 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             if (gamepad1.right_trigger > 0) {
                 slideMotor.setPower(-slideSpeed);
+                yPos+= 1;
             }
 
             else if (gamepad1.left_trigger > 0) {
                 slideMotor.setPower(slideSpeed);
+                yPos -= 1;
+            }
+            else if (gamepad1.right_trigger  == 0 && gamepad1.left_trigger == 0 && yPos > 0) {
+                slideMotor.setPower(-0.05);
             }
             else{
                 slideMotor.setPower(0);
