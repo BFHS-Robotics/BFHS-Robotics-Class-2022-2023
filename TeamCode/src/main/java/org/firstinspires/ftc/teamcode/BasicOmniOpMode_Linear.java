@@ -87,6 +87,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     // Define class members
     private Servo servo = null;
+    private Servo servo2 = null;
     double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
     boolean rampUp = true;
 
@@ -94,6 +95,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     @Override
     public void runOpMode() {
         servo = hardwareMap.get(Servo.class, "armServo");
+        servo = hardwareMap.get(Servo.class, "armServo2");
 
 
 
@@ -128,12 +130,14 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             while (gamepad1.y){
                 position += INCREMENT;
                 servo.setPosition(position);
+                servo2.setPosition(-position);
                 //servo.setPosition(0.0);
             }
 
             while (gamepad1.a) {
                 position -= INCREMENT;
                 servo.setPosition(position);
+                servo2.setPosition(-position);
 //                servo.setPosition(1.0);
             }
 
