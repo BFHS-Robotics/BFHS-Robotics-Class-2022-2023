@@ -95,7 +95,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     @Override
     public void runOpMode() {
         servo = hardwareMap.get(Servo.class, "armServo");
-        servo = hardwareMap.get(Servo.class, "armServo2");
+        servo2 = hardwareMap.get(Servo.class, "armServo2");
 
 
 
@@ -123,21 +123,24 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        servo.setPosition(0.5);
+        servo2.setPosition(0.5);
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
 
-            while (gamepad1.y){
-                position += INCREMENT;
-                servo.setPosition(position);
-                servo2.setPosition(-position);
+            if (gamepad1.y){
+                //position += INCREMENT;
+                servo.setPosition(0.7);
+                servo2.setPosition(0.2);
                 //servo.setPosition(0.0);
             }
 
-            while (gamepad1.a) {
-                position -= INCREMENT;
-                servo.setPosition(position);
-                servo2.setPosition(-position);
+            else if (gamepad1.a) {
+                //position -= INCREMENT;
+                servo.setPosition(0.3);
+                servo2.setPosition(0.6);
 //                servo.setPosition(1.0);
             }
 
