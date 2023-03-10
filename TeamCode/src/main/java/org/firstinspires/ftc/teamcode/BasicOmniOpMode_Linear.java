@@ -83,6 +83,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     static final double MIN_POS     =  0.0;     // Minimum rotational position
     static final double     slideSpeed = 0.4; // Slide Speed (Up/down)
     static  double  yPos = 0.0;
+    double powerMult = 1.0;
 
 
     // Define class members
@@ -169,16 +170,25 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double leftFrontPower  = axial + lateral + yaw;
-            double rightFrontPower = axial - lateral - yaw;
-            double leftBackPower   = axial - lateral + yaw;
-            double rightBackPower  = axial + lateral - yaw;
+            double leftFrontPower  = (axial + lateral + yaw) ;
+            double rightFrontPower = (axial - lateral - yaw) ;
+            double leftBackPower   = (axial - lateral + yaw) ;
+            double rightBackPower  = (axial + lateral - yaw) ;
+
+            if (gamepad1.dpad_up && powerMult < 2.5){
+                powerMult += 0.1;
+
+            }
+            else if(gamepad1.dpad_down && powerMult > 0.4){
+                powerMult -= 0.1;
+            }
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
             max = Math.max(max, Math.abs(leftBackPower));
             max = Math.max(max, Math.abs(rightBackPower));
+
 
             if (max > 1.0) {
                 leftFrontPower  /= max;
@@ -190,15 +200,16 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
 
 
             // Send calculated power to wheels
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+            leftFrontDrive.setPower(leftFrontPower * powerMult);
+            rightFrontDrive.setPower(rightFrontPower * powerMult);
+            leftBackDrive.setPower(leftBackPower * powerMult);
+            rightBackDrive.setPower(rightBackPower * powerMult);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("Power Modifier", powerMult);
             telemetry.update();
         }
     }}
