@@ -117,6 +117,8 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         slideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        //slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -175,14 +177,25 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             double leftBackPower   = (axial - lateral + yaw) ;
             double rightBackPower  = (axial + lateral - yaw) ;
 
-            if (gamepad1.dpad_up && powerMult < 2.5){
+            boolean isSlow = false;
+            while (gamepad1.dpad_up && powerMult < 2.5){
+                isSlow = true;
+
+            }
+            if(isSlow) {
                 powerMult += 0.1;
+                isSlow = false;
+            }
+
+            boolean isNotSlow = false;
+            while (gamepad1.dpad_down && powerMult > 0.2){
+                isNotSlow = true;
 
             }
-            else if(gamepad1.dpad_down && powerMult > 0.4){
+            if(isNotSlow) {
                 powerMult -= 0.1;
+                isNotSlow = false;
             }
-
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
