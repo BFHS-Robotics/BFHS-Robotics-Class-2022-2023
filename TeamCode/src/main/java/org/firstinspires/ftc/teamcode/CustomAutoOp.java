@@ -69,20 +69,33 @@ public class CustomAutoOp<opModeIsActive> extends LinearOpMode {
 
         waitForStart();
 
-        encoderDriveForward(DRIVE_SPEED, 10, 10);
+        //encoderDriveForward(DRIVE_SPEED, 10, 10);
+
         float[] hsvValues = new float[3];
         while(opModeIsActive()){
             NormalizedRGBA colors = colorSensor.getNormalizedColors();
-
+            //color = NormalizedColorSensor.rgb(0,0,0);
             Color.colorToHSV(colors.toColor(), hsvValues);
+            Color.blue(0);
+            inBox(colors.toColor());
         }
 
+
     }
 
-    public void inBox(double power){
-        if
+
+    public void inBox(int color){
+
+        if (Color.blue(color)> 100);
+        telemetry.addData("Value",  " %7d ",Color.blue(color));
+        telemetry.update();
+        //leftBackDrive.setPower(0);
+        //rightBackDrive.setPower(0);
+        //leftFrontDrive.setPower(0);
+        //rightFrontDrive.setPower(0);
+
     }
-   
+
 
     public void encoderDriveForward(double speed, double leftInches, double rightInches) {
         int newLeftTarget;
