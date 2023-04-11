@@ -7,11 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.RobotAutoDriveByEncoder_Linear;
 
@@ -24,7 +26,7 @@ public class CustomAutoOp<opModeIsActive> extends LinearOpMode {
     private DcMotor rightBackDrive = null;
     private DcMotor leftBackDrive = null;
     private DcMotor slideMotor = null;
-    NormalizedColorSensor colorSensor;
+    DigitalChannel digitalTouch;  // Hardware Device Object
 
     static final double COUNTS_PER_MOTOR_REV = 537.7;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // No External Gearing.
@@ -42,7 +44,8 @@ public class CustomAutoOp<opModeIsActive> extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "leftBackDrive");
         slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
-        colorSensor = hardwareMap.get(NormalizedColorSensor.class, "sensor_color");
+        digitalTouch = hardwareMap.get(DigitalChannel.class, "touchSensor");
+        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
@@ -51,7 +54,7 @@ public class CustomAutoOp<opModeIsActive> extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        slideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        slideMotor.setDirection(DcMotor.Direction.FORWARD);
 
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -63,38 +66,21 @@ public class CustomAutoOp<opModeIsActive> extends LinearOpMode {
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        if (colorSensor instanceof SwitchableLight) {
-            ((SwitchableLight)colorSensor).enableLight(true);
-        }
+
 
         waitForStart();
-
-        //encoderDriveForward(DRIVE_SPEED, 10, 10);
-
-        float[] hsvValues = new float[3];
-        while(opModeIsActive()){
-            NormalizedRGBA colors = colorSensor.getNormalizedColors();
-            //color = NormalizedColorSensor.rgb(0,0,0);
-            Color.colorToHSV(colors.toColor(), hsvValues);
-            Color.blue(0);
-            inBox(colors.toColor());
+            while(opModeIsActive()){
+                if(digitalTouch.getState()==false){
+                    encoderDriveForward(0.6,4,4);
+                }
         }
 
 
+
+
     }
 
 
-    public void inBox(int color){
-
-        if (Color.blue(color)> 100);
-        telemetry.addData("Value",  " %7d ",Color.blue(color));
-        telemetry.update();
-        //leftBackDrive.setPower(0);
-        //rightBackDrive.setPower(0);
-        //leftFrontDrive.setPower(0);
-        //rightFrontDrive.setPower(0);
-
-    }
 
 
     public void encoderDriveForward(double speed, double leftInches, double rightInches) {
