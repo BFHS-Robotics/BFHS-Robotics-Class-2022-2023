@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -90,17 +91,21 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  */
 
 @Autonomous(name="Robot: Auto Drive By Gyro", group="Robot")
-@Disabled
+
 public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor         leftDrive   = null;
     private DcMotor         rightDrive  = null;
+    private DcMotor         rightBackDrive = null;
+    private DcMotor         leftBackDrive = null;
+    private DcMotor         slideMotor      = null;
     private BNO055IMU       imu         = null;      // Control/Expansion Hub IMU
 
     private double          robotHeading  = 0;
     private double          headingOffset = 0;
     private double          headingError  = 0;
+    private double          slideInches   = 0;
 
     // These variable are declared here (as class members) so they can be updated in various methods,
     // but still be displayed by sendTelemetry()
@@ -142,14 +147,19 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     public void runOpMode() {
 
         // Initialize the drive system variables.
-        leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
+        leftDrive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
+        rightDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
+        leftBackDrive = hardwareMap.get(DcMotor.class,"leftBackDrive");
+        slideMotor = hardwareMap.get(DcMotor.class,"slideMotor");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // define initialization values for IMU, and then initialize it.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -162,6 +172,10 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         rightDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
@@ -172,6 +186,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         // Set the encoders for closed loop speed control, and reset the heading.
         leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         resetHeading();
 
         // Step through each leg of the path,
@@ -219,6 +235,9 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
     *                   If a relative angle is required, add/subtract from the current robotHeading.
     */
+
+
+
     public void driveStraight(double maxDriveSpeed,
                               double distance,
                               double heading) {
@@ -234,9 +253,13 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
             // Set Target FIRST, then turn on RUN_TO_POSITION
             leftDrive.setTargetPosition(leftTarget);
             rightDrive.setTargetPosition(rightTarget);
+            leftBackDrive.setTargetPosition(leftTarget);
+            rightBackDrive.setTargetPosition(rightTarget);
 
             leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // Set the required driving speed  (must be positive for RUN_TO_POSITION)
             // Start driving straight, and then enter the control loop
@@ -265,6 +288,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
             moveRobot(0, 0);
             leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
@@ -388,6 +413,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
         leftDrive.setPower(leftSpeed);
         rightDrive.setPower(rightSpeed);
+        leftBackDrive.setPower(leftSpeed);
+        rightBackDrive.setPower(rightSpeed);
     }
 
     /**
@@ -428,4 +455,10 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         headingOffset = getRawHeading();
         robotHeading = 0;
     }
+
+    public void slideUp(double slideInches){
+
+    }
+
 }
+
