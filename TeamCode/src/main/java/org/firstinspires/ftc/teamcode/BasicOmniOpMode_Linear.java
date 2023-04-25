@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -75,7 +76,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    private DcMotor         slideMotor = null;
+    private DcMotorEx slideMotor = null;
 
     static final double INCREMENT   = 0.02;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
@@ -108,14 +109,14 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "leftBackDrive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
-        slideMotor = hardwareMap.get(DcMotor.class, "slideMotor");
+        slideMotor = hardwareMap.get(DcMotorEx.class, "slideMotor");
 
 
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        slideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        slideMotor.setDirection(DcMotor.Direction.REVERSE);
 
         //slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -148,12 +149,12 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             }
 
             if (gamepad1.right_trigger > 0) {
-                slideMotor.setPower(-slideSpeed);
+                slideMotor.setPower(slideSpeed);
                 yPos+= 1;
             }
 
             else if (gamepad1.left_trigger > 0) {
-                slideMotor.setPower(slideSpeed);
+                slideMotor.setPower(-slideSpeed);
                 yPos -= 1;
             }
             else if (gamepad1.right_trigger  == 0 && gamepad1.left_trigger == 0 && yPos > 0) {
@@ -222,6 +223,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("Slide position: ", slideMotor.getCurrentPosition());
             telemetry.addData("Power Modifier", powerMult);
             telemetry.update();
         }

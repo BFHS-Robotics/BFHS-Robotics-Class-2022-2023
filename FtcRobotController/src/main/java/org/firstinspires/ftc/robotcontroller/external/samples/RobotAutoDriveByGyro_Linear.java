@@ -105,7 +105,6 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     private double          robotHeading  = 0;
     private double          headingOffset = 0;
     private double          headingError  = 0;
-    private double          slideInches   = 0;
 
     // These variable are declared here (as class members) so they can be updated in various methods,
     // but still be displayed by sendTelemetry()
@@ -116,6 +115,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     private double  rightSpeed    = 0;
     private int     leftTarget    = 0;
     private int     rightTarget   = 0;
+    static final double     slideSpeed = 0.4; // Slide Speed (Up/down)
+    private int     maxSlideHeight = 2300;
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
@@ -160,6 +161,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
+        slideMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // define initialization values for IMU, and then initialize it.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -188,6 +190,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         resetHeading();
 
         // Step through each leg of the path,
@@ -195,8 +198,9 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         //          holdHeading() is used after turns to let the heading stabilize
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
-        driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
-        turnToHeading( TURN_SPEED, -45.0);               // Turn  CW to -45 Degrees
+        //driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
+        slideUp(1000);
+        /*turnToHeading( TURN_SPEED, -45.0);               // Turn  CW to -45 Degrees
         holdHeading( TURN_SPEED, -45.0, 0.5);   // Hold -45 Deg heading for a 1/2 second
 
         driveStraight(DRIVE_SPEED, 17.0, -45.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
@@ -207,7 +211,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         turnToHeading( TURN_SPEED,   0.0);               // Turn  CW  to 0 Degrees
         holdHeading( TURN_SPEED,   0.0, 1.0);    // Hold  0 Deg heading for 1 second
 
-        driveStraight(DRIVE_SPEED,-48.0, 0.0);    // Drive in Reverse 48" (should return to approx. staring position)
+        driveStraight(DRIVE_SPEED,-48.0, 0.0);    // Drive in Reverse 48" (should return to approx. staring position)*/
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -456,7 +460,14 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         robotHeading = 0;
     }
 
-    public void slideUp(double slideInches){
+    public void slideUp(double slideTargetPosition){
+        //int slideMove = (int)((slideInches * COUNTS_PER_INCH)*2);
+        while(opModeIsActive() && slideMotor.getCurrentPosition() < slideTargetPosition){
+            slideMotor.setPower(slideSpeed);
+
+
+        }
+        slideMotor.setPower(0);
 
     }
 
