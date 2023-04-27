@@ -158,7 +158,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
                 yPos -= 1;
             }
             else if (gamepad1.right_trigger  == 0 && gamepad1.left_trigger == 0 && yPos > 0) {
-                slideMotor.setPower(-0.05);
+                slideMotor.setPower(0.05);
             }
             else{
                 slideMotor.setPower(0);

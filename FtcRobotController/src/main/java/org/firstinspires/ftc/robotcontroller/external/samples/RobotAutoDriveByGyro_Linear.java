@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -101,6 +102,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     private DcMotor         leftBackDrive = null;
     private DcMotor         slideMotor      = null;
     private BNO055IMU       imu         = null;      // Control/Expansion Hub IMU
+    private Servo servo = null;
+    private Servo servo2 = null;
 
     private double          robotHeading  = 0;
     private double          headingOffset = 0;
@@ -117,6 +120,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     private int     rightTarget   = 0;
     static final double     slideSpeed = 0.4; // Slide Speed (Up/down)
     private int     maxSlideHeight = 2300;
+    static final double MAX_POS     =  1.0;     // Maximum rotational position
+    static final double MIN_POS     =  0.0;     // Minimum rotational position
 
     // Calculate the COUNTS_PER_INCH for your specific drive train.
     // Go to your motor vendor website to determine your motor's COUNTS_PER_MOTOR_REV
@@ -142,10 +147,13 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
     static final double     P_TURN_GAIN            = 0.02;     // Larger is more responsive, but also less stable
     static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
+    double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
 
-
+    private ElapsedTime runtime = new ElapsedTime();
     @Override
     public void runOpMode() {
+        servo.setPosition(position);
+        servo2.setPosition(position);
 
         // Initialize the drive system variables.
         leftDrive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
@@ -153,6 +161,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "rightBackDrive");
         leftBackDrive = hardwareMap.get(DcMotor.class,"leftBackDrive");
         slideMotor = hardwareMap.get(DcMotor.class,"slideMotor");
+        servo = hardwareMap.get(Servo.class, "armServo");
+        servo2 = hardwareMap.get(Servo.class, "armServo2");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // When run, this OpMode should start both motors driving forward. So adjust these two lines based on your first test drive.
@@ -192,6 +202,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slideMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         resetHeading();
+        runtime.reset();
+        //runtime.milliseconds();
 
         // Step through each leg of the path,
         // Notes:   Reverse movement is obtained by setting a negative distance (not speed)
@@ -199,7 +211,9 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
         //driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
-        slideUp(1000);
+        //slideUp(1000);
+        openServo();
+        closeServo();
         /*turnToHeading( TURN_SPEED, -45.0);               // Turn  CW to -45 Degrees
         holdHeading( TURN_SPEED, -45.0, 0.5);   // Hold -45 Deg heading for a 1/2 second
 
@@ -469,6 +483,28 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         }
         slideMotor.setPower(0);
 
+    }
+
+    public void waitTime(double miliseconds){
+        double startTime = runtime.milliseconds();
+        while(opModeIsActive() && runtime.milliseconds() < startTime + miliseconds){
+
+        }
+
+    }
+
+    public void openServo(){
+            servo.setPosition(0.7);
+            servo2.setPosition(0.2);
+            waitTime(500);
+
+
+    }
+
+    public void closeServo(){
+            servo.setPosition(0.3);
+            servo2.setPosition(0.6);
+            waitTime(500);
     }
 
 }
