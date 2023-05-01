@@ -152,8 +152,6 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     @Override
     public void runOpMode() {
-        servo.setPosition(position);
-        servo2.setPosition(position);
 
         // Initialize the drive system variables.
         leftDrive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
@@ -173,6 +171,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         slideMotor.setDirection(DcMotor.Direction.REVERSE);
 
+
+
         // define initialization values for IMU, and then initialize it.
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit            = BNO055IMU.AngleUnit.DEGREES;
@@ -188,6 +188,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
@@ -210,10 +211,20 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         //          holdHeading() is used after turns to let the heading stabilize
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
-        //driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
-        //slideUp(1000);
-        openServo();
+        //driveStraight(DRIVE_SPEED, 48.0, 0.0);    // Drive Forward 24"
         closeServo();
+        waitTime(500);
+        slideUp(1900);
+        driveStraight(DRIVE_SPEED,12,0.0);
+        openServo();
+        waitTime(500);
+        closeServo();
+        driveStraight(DRIVE_SPEED, -10, 0.0);
+        slideDown(1900);
+        crabLeft(15, 0.5);
+        driveStraight(0.7,150,0.0);
+
+
         /*turnToHeading( TURN_SPEED, -45.0);               // Turn  CW to -45 Degrees
         holdHeading( TURN_SPEED, -45.0, 0.5);   // Hold -45 Deg heading for a 1/2 second
 
@@ -311,17 +322,68 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         }
     }
 
-    /**
-     *  Method to spin on central axis to point in a new direction.
-     *  Move will stop if either of these conditions occur:
-     *  1) Move gets to the heading (angle)
-     *  2) Driver stops the opmode running.
-     *
-     * @param maxTurnSpeed Desired MAX speed of turn. (range 0 to +1.0)
-     * @param heading Absolute Heading Angle (in Degrees) relative to last gyro reset.
-     *              0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
-     *              If a relative angle is required, add/subtract from current heading.
-     */
+    public void crabRight(double inches, double speed){
+        int moveCounts = (int)(inches * COUNTS_PER_INCH);
+        leftTarget = leftDrive.getCurrentPosition() + moveCounts;
+        rightTarget = rightDrive.getCurrentPosition() + moveCounts;
+
+        leftDrive.setTargetPosition(leftTarget);
+        rightDrive.setTargetPosition(-rightTarget);
+        rightBackDrive.setTargetPosition(rightTarget);
+        leftBackDrive.setTargetPosition(-leftTarget);
+
+
+        leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while(opModeIsActive()&& rightDrive.isBusy() && leftDrive.isBusy()){
+
+            leftDrive.setPower(0.6);
+            rightDrive.setPower(-0.6);
+            rightBackDrive.setPower(0.6);
+            leftBackDrive.setPower(-0.6);
+
+        }
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+        rightBackDrive.setPower(0);
+        leftBackDrive.setPower(0);
+
+    }
+
+    public void crabLeft(double inches, double speed){
+        int moveCounts = (int)(inches * COUNTS_PER_INCH);
+        leftTarget = leftDrive.getCurrentPosition() + moveCounts;
+        rightTarget = rightDrive.getCurrentPosition() + moveCounts;
+
+        leftDrive.setTargetPosition(-leftTarget);
+        rightDrive.setTargetPosition(rightTarget);
+        rightBackDrive.setTargetPosition(-rightTarget);
+        leftBackDrive.setTargetPosition(leftTarget);
+
+
+        leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        while(opModeIsActive()&& rightDrive.isBusy() && leftDrive.isBusy()){
+
+            leftDrive.setPower(-0.6);
+            rightDrive.setPower(0.6);
+            rightBackDrive.setPower(-0.6);
+            leftBackDrive.setPower(0.6);
+
+        }
+        leftDrive.setPower(0);
+        rightDrive.setPower(0);
+        rightBackDrive.setPower(0);
+        leftBackDrive.setPower(0);
+
+    }
+
     public void turnToHeading(double maxTurnSpeed, double heading) {
 
         // Run getSteeringCorrection() once to pre-calculate the current error
@@ -481,7 +543,6 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
 
         }
-        slideMotor.setPower(0);
 
     }
 
@@ -507,5 +568,18 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
             waitTime(500);
     }
 
+    public void slideDown(double slideTargetPosition){
+        //int slideMove = (int)((slideInches * COUNTS_PER_INCH)*2);
+        while(opModeIsActive() && slideMotor.getCurrentPosition() > slideTargetPosition){
+            slideMotor.setPower(-slideSpeed);
+
+
+        }
+        slideMotor.setPower(0);
+
+    }
+
 }
+
+
 
