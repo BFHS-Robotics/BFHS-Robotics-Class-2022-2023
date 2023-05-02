@@ -118,7 +118,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     private double  rightSpeed    = 0;
     private int     leftTarget    = 0;
     private int     rightTarget   = 0;
-    static final double     slideSpeed = 0.4; // Slide Speed (Up/down)
+    static final double     slideSpeed = 0.6; // Slide Speed (Up/down)
     private int     maxSlideHeight = 2300;
     static final double MAX_POS     =  1.0;     // Maximum rotational position
     static final double MIN_POS     =  0.0;     // Minimum rotational position
@@ -215,14 +215,20 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         closeServo();
         waitTime(500);
         slideUp(1900);
-        driveStraight(DRIVE_SPEED,12,0.0);
+        driveStraight(0.8,12,0.0);
         openServo();
         waitTime(500);
         closeServo();
-        driveStraight(DRIVE_SPEED, -10, 0.0);
-        slideDown(1900);
-        crabLeft(15, 0.5);
-        driveStraight(0.7,150,0.0);
+        driveStraight(0.5, -10, 0.0);
+        slideDown(150);
+        crabLeft(26, 0.5);
+        openServo();
+        driveStraight(0.8,77,0.0);
+        closeServo();
+        slideUp(1900);
+        waitTime(500);
+        driveStraight(0.8,-56,0);
+
 
 
         /*turnToHeading( TURN_SPEED, -45.0);               // Turn  CW to -45 Degrees
