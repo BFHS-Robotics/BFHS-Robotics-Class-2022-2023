@@ -118,6 +118,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     private double  rightSpeed    = 0;
     private int     leftTarget    = 0;
     private int     rightTarget   = 0;
+    private int     leftBackTarget = 0;
+    private int     rightBackTarget = 0;
     static final double     slideSpeed = 0.6; // Slide Speed (Up/down)
     private int     maxSlideHeight = 2300;
     static final double MAX_POS     =  1.0;     // Maximum rotational position
@@ -213,21 +215,27 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
         //driveStraight(DRIVE_SPEED, 48.0, 0.0);    // Drive Forward 24"
         closeServo();
-        waitTime(500);
-        slideUp(1900);
-        driveStraight(0.8,12,0.0);
+        waitTime(1500);
+        slideUp(1600);
+        driveStraight(0.4,12,0.0);
         openServo();
-        waitTime(500);
         closeServo();
         driveStraight(0.5, -10, 0.0);
-        slideDown(150);
+        slideDown(5);
         crabLeft(26, 0.5);
         openServo();
-        driveStraight(0.8,77,0.0);
+        driveStraight(0.6,72,0.0);
         closeServo();
         slideUp(1900);
+        driveStraight(0.4,-10,0);
+        turnToHeading(0.5,180);
         waitTime(500);
-        driveStraight(0.8,-56,0);
+        driveStraight(0.5, 30, 180);
+        turnToHeading(0.5, 90);
+        driveStraight(0.4,10,90);
+        driveStraight(0.4, -20,90);
+
+
 
 
 
@@ -284,12 +292,14 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
             int moveCounts = (int)(distance * COUNTS_PER_INCH);
             leftTarget = leftDrive.getCurrentPosition() + moveCounts;
             rightTarget = rightDrive.getCurrentPosition() + moveCounts;
+            leftBackTarget= leftBackDrive.getCurrentPosition() + moveCounts;
+            rightBackTarget = rightBackDrive.getCurrentPosition() + moveCounts;
 
             // Set Target FIRST, then turn on RUN_TO_POSITION
             leftDrive.setTargetPosition(leftTarget);
             rightDrive.setTargetPosition(rightTarget);
-            leftBackDrive.setTargetPosition(leftTarget);
-            rightBackDrive.setTargetPosition(rightTarget);
+            leftBackDrive.setTargetPosition(leftBackTarget);
+            rightBackDrive.setTargetPosition(rightBackTarget);
 
             leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -552,9 +562,9 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
     }
 
-    public void waitTime(double miliseconds){
+    public void waitTime(double milliseconds){
         double startTime = runtime.milliseconds();
-        while(opModeIsActive() && runtime.milliseconds() < startTime + miliseconds){
+        while(opModeIsActive() && runtime.milliseconds() < startTime + milliseconds){
 
         }
 
@@ -563,7 +573,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     public void openServo(){
             servo.setPosition(0.7);
             servo2.setPosition(0.2);
-            waitTime(500);
+            waitTime(600);
 
 
     }
@@ -571,7 +581,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     public void closeServo(){
             servo.setPosition(0.3);
             servo2.setPosition(0.6);
-            waitTime(500);
+            waitTime(600);
     }
 
     public void slideDown(double slideTargetPosition){
