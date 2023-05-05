@@ -213,8 +213,24 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         //          holdHeading() is used after turns to let the heading stabilize
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
-        //driveStraight(DRIVE_SPEED, 48.0, 0.0);    // Drive Forward 24"
-        closeServo();
+        //Neds Code
+        /*closeServo();
+        waitTime(500);
+        driveStraight(0.4,24,0.0);
+        turnToHeading(.6,90);
+        driveStraight(0.4,24,90);
+        turnToHeading(0.6,180);
+        driveStraight(0.4,24,180);
+        turnToHeading(0.6,-90);
+        driveStraight(0.4,24,-90);
+        turnToHeading(0.6,0);
+        turnToHeading(0.6,180);
+        turnToHeading(0.6,0);
+        */
+
+
+        // ACTUAL CODE
+       closeServo();
         waitTime(500);
         slideUp(1700);
         driveStraight(0.4,12,0.0);
@@ -600,7 +616,6 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         slideMotor.setPower(0);
 
     }
-
 }
 
 
