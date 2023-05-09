@@ -230,7 +230,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
 
         // ACTUAL CODE
-       closeServo();
+        closeServo();
         waitTime(500);
         slideUp(1700);
         driveStraight(0.4,12,0.0);
