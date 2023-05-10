@@ -191,6 +191,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
@@ -237,7 +238,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         openServo();
         crabLeft(26, 0.5);
         slideDown(5);
-        driveStraight(0.8,55,0.0);
+        driveStraight(0.8,51,0.0);
         closeServo();
         slideUp(1900);
         driveStraight(0.5, -37, 0);
@@ -247,14 +248,14 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         driveStraight(0.4,-5,-90);
         turnToHeading(0.6,0);
         slideDown(5);
-        driveStraight(0.8,35,0);
+        driveStraight(0.8,38,0);
         closeServo();
         slideUp(1700);
         driveStraight(0.7,-37,0);
         turnToHeading(0.5,-90);
-        driveStraight(0.7,10,-90);
+        driveStraight(0.7,6,-90);
         openServo();
-        crabRight(4,0.7);
+        //crabRight(2,0.7);
         driveStraight(0.7, -22,-90);
 
 
